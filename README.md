@@ -1,4 +1,4 @@
-# Hell.com - Docker Setup
+# Docker Setup
 
 ## Quick Start with Docker
 

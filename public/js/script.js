@@ -355,13 +355,14 @@ if (doItLink) {
 
 // Mysterious title changes
 const titles = [
-    'hell.com',
-    'h e l l . c o m',
+    'void',
+    'v o i d',
     '...',
     'parallel web',
-    'hell.com',
+    'voided',
     'no access',
-    'hell.com'
+    'zeh ell',
+    'z v u c k . c o m',
 ];
 
 let titleIndex = 0;

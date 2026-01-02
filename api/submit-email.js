@@ -7,29 +7,47 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    // CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    // Security headers
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    
+    // CORS headers - restrict to your domain in production
+    const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ['http://localhost:3000'];
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
     res.setHeader('Access-Control-Allow-Methods', 'POST');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
     try {
         const { email } = req.body;
 
-        // Validate email
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!email || !emailRegex.test(email)) {
+        // Enhanced email validation
+        if (!email || typeof email !== 'string') {
+            return res.status(400).json({ error: 'Invalid email address' });
+        }
+        
+        const trimmedEmail = email.trim();
+        const emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+        
+        if (!emailRegex.test(trimmedEmail) || trimmedEmail.length > 254) {
             return res.status(400).json({ error: 'Invalid email address' });
         }
 
-        // Get timestamp
+        // Get timestamp and anonymize IP for privacy compliance
         const timestamp = new Date().toISOString();
-        const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        const rawIp = req.headers['x-forwarded-for'] || req.connection?.remoteAddress || 'unknown';
+        const ip = rawIp.split(',')[0];
+        const anonymizedIp = ip.split('.').slice(0, 3).join('.') + '.xxx';
 
         // Log to console (in production, save to database)
         console.log('Email submission:', {
-            email,
+            email: trimmedEmail,
             timestamp,
-            ip: ip?.split(',')[0]
+            ip: anonymizedIp // Privacy-friendly logging
         });
 
         // Option 1: Send to your email via SendGrid/Mailgun
@@ -65,7 +83,7 @@ async function sendEmail(submittedEmail) {
     // await sgMail.send({
     //     to: process.env.ADMIN_EMAIL,
     //     from: process.env.FROM_EMAIL,
-    //     subject: 'New Hell.com Email Submission',
+    //     subject: 'New Email Submission',
     //     text: `New email: ${submittedEmail}`
     // });
 }

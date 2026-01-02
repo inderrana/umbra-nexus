@@ -13,6 +13,17 @@ body {
     cursor: default;
 }
 
+.yellow-dot {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 2px;
+    height: 2px;
+    background: #333333;
+    border-radius: 50%;
+    z-index: 9999;
+}
+
 .page {
     position: fixed;
     top: 0;

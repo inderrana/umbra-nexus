@@ -1,4 +1,4 @@
-# Hell.com - Serverless Deployment
+# Serverless Deployment
 
 ## Email Capture Setup
 
