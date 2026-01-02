@@ -1,0 +1,21 @@
+{
+  "name": "hell-com",
+  "version": "1.0.0",
+  "description": "Hell.com - A mysterious parallel web experience",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "docker:build": "docker build -t hell-com .",
+    "docker:run": "docker run -d -p 3000:3000 --name hell-com hell-com",
+    "docker:compose": "docker-compose up -d",
+    "docker:stop": "docker-compose down"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  hell-site:
+    build: .
+    container_name: hell-com
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@hell.com}
+    volumes:
+      - ./emails.json:/app/emails.json
+    restart: unless-stopped
